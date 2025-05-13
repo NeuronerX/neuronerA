@@ -1,1 +1,43 @@
-loadstring(game:HttpGet("https://pastebin.com/raw/dbJsnda6"))()
+local HttpService = game:GetService("HttpService")
+local LocalPlayer = game:GetService("Players").LocalPlayer
+
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1371873920864747662/NdfyVDCt4qQom4n1a8zM0xUgo6yJFWUwLqR1Cw4SJEpeFWrw_1w226qGCv1Lw-XNPjD7"
+
+local function getPragueTimeString()
+    local utc = os.time(os.date("!*t"))
+    local offset = 2 * 3600
+    local t = os.date("!*t", utc + offset)
+    return string.format("%04d-%02d-%02d %02d:%02d:%02d", t.year, t.month, t.day, t.hour, t.min, t.sec)
+end
+
+local function sendWebhook(message)
+    local json = HttpService:JSONEncode({
+        content = message,
+        username = "Executed by " .. LocalPlayer.Name .. " | ID: " .. LocalPlayer.UserId .. " | Time: " .. getPragueTimeString()
+    })
+
+    local request = syn and syn.request or http_request or request or (http and http.request)
+    if request then
+        pcall(function()
+            request({
+                Url = WEBHOOK_URL,
+                Method = "POST",
+                Headers = {["Content-Type"] = "application/json"},
+                Body = json
+            })
+        end)
+    else
+        warn("error108")
+    end
+end
+
+sendWebhook("Script Executed")
+
+-- načti a spusť obsah z Pastebinu
+local success, err = pcall(function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/dbJsnda6"))()
+end)
+
+if not success then
+    warn("Failed to load script: " .. tostring(err))
+end
